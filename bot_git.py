@@ -14,7 +14,7 @@ def run_forever():
         try:
             bot.polling()
         except:
-        pass
+            pass
 
 def download_file(message_id, file_id):
     json_response = requests.get("https://api.telegram.org/bot" + token + "/getFile?file_id=" + file_id).json()
