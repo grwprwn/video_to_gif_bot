@@ -6,8 +6,13 @@ import os
 from moviepy.editor import *
 import json
 import shutil
+import time
+import threading
 
-token = <bot_token>
+
+token = "<bot-token>"
+
+heroku_app = "<heroku-app-link>"
 
 def run_forever():
     while True:
@@ -15,6 +20,11 @@ def run_forever():
             bot.polling()
         except:
             pass
+
+def ping_app_sometimes():
+    while True:
+        requests.get(heroku_app)
+        time.sleep(1200)            
 
 def download_file(message_id, file_id):
     json_response = requests.get("https://api.telegram.org/bot" + token + "/getFile?file_id=" + file_id).json()
@@ -57,4 +67,7 @@ def downl(message):
     bot.reply_to(message, "Here is link for your gif: " + json.loads(link.text)['link'] + "\nIt will expire at " + json.loads(link.text)['expires'][0:10])
     shutil.rmtree(str(message.message_id), ignore_errors=True)
 
-run_forever()
+t1 = threading.Thread(target=run_forever)
+t2 = threading.Thread(target=ping_app_sometimes)
+t1.start()
+t2.start()
