@@ -10,9 +10,9 @@ import time
 import threading
 
 
-token = "<bot-token>"
+token = "<bot_token>"
 
-heroku_app = "<heroku-app-link>"
+heroku_app = "<heroku_app_link>"
 
 def run_forever():
     while True:
@@ -55,9 +55,9 @@ bot = telebot.TeleBot(token, parse_mode=None)
 def send_isntructions(message):
     bot.reply_to(message, "Hello! Send me the mp4 file and I will convert it to the gif file.\nYou can also download a gif file from Telegram.")
 
-@bot.message_handler(content_types=['animation'])
+@bot.message_handler(content_types=['animation', 'video'])
 def downl(message):
-    bot.reply_to(message, "Wait a minute or two, please!")
+    bot.reply_to(message, "Wait a minute or two, please!\nIf your file's size is more than 50mb, than it won't be uploaded.\nIf link for the file won't be sended in a few minutes, either check your file's size or try again, please.")
     name = download_file(str(message.message_id), message.document.file_id)
     mp4_to_gif(str(message.message_id), name) 
     session = requests.Session()
@@ -66,6 +66,7 @@ def downl(message):
     print(link.text)
     bot.reply_to(message, "Here is link for your gif: " + json.loads(link.text)['link'] + "\nIt will expire at " + json.loads(link.text)['expires'][0:10])
     shutil.rmtree(str(message.message_id), ignore_errors=True)
+
 
 t1 = threading.Thread(target=run_forever)
 t2 = threading.Thread(target=ping_app_sometimes)
